@@ -1,9 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import '../services/location.dart';
-import 'package:http/http.dart' as http;
-import 'package:dart:convert;
+import 'dart:convert';
+import '../screens/location_screen.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import '../services/weather.dart';
+
+const apiKey = '55441606db9714453cc79d199f1dd74b';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -13,32 +16,44 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-    
+  late double latitude;
+  late double longitude;
+
+  void pushToLocationScreen(dynamic weatherData) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen(localWeatherData: weatherData);
+    }));
+  }
+
   Future<void> getLocation() async {
-    
-  } 
+    var location = Location();
+    await location.getCurrentPosition();
+
+    latitude = location.latitude!;
+    longitude = location.longitude!;
+
+    getData();
+  }
 
   void getData() async {
-    var url = Uri.parse('https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=b6907d289e10d714a6e88b30761fae22');
-    http.Response response = await http.get(url);
-
-    if (response.statusCode == 200) { // se a requisição foi feita com sucesso
-      var data = response.body;
-      print(data);  // imprima o resultado
-    } else {
-      print(response.statusCode);  // senão, imprima o código de erro
-    }
+    var weatherData = await WeatherModel().getLocationWeather();
+    pushToLocationScreen(weatherData);
   }
 
   @override
   void initState() {
     super.initState();
-    getLocation();
+    getData();
   }
 
+  @override
   Widget build(BuildContext context) {
     getData();
-    return Scaffold(
+    return const Center(
+      child: SpinKitDoubleBounce(
+        color: Colors.white,
+        size: 100.0,
+      ),
     );
   }
 }

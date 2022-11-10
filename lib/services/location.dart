@@ -1,18 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../screens/loading_screen.dart';
 
-class Location extends StatefulWidget {
-  const Location({Key? key}) : super(key: key);
-
-  @override
-  State<Location> createState() => _LocationState();
-}
-
-class _LocationState extends State<Location> {
-  late double latitude;
-  late double longitude;
+class Location {
+  late double latitude = 0.0;
+  late double longitude = 0.0;
 
   Future<void> checkLocationPermission() async {
     bool serviceEnabled;
@@ -33,22 +25,30 @@ class _LocationState extends State<Location> {
     }
     if (permission == LocationPermission.deniedForever) {
       // permissões negadas para sempre
-      return Future.error(
-          'A permissão para acesso a localização foi negada para sempre. Não é possível pedir permissão.');
+      return Future.error('A permissão para acesso a localização foi negada para sempre. Não é possível pedir permissão.');
     }
+
+
   }
 
   Future<void> getCurrentLocation() async {
     await checkLocationPermission();
 
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low);
-    latitude = position as double;
-    longitude = position as double;
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+    latitude = position.latitude;
+    longitude = position.longitude;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    getCurrentLocation();
+    return const Center(
+
+    );
   }
+
+  getCurrentPosition() {
+    getCurrentLocation();
+  }
+
 }
