@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import '../screens/loading_screen.dart';
 
 class Location {
   late double latitude = 0.0;
